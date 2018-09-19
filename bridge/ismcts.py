@@ -170,14 +170,14 @@ def ISMCTS(rootstate, itermax, verbose=False):
             moves = state.GetMoves()
             if len(moves) == 0 or len(node.GetUntriedMoves(moves)) > 0:
                 break
-            node = node.ISUCTSelectChild(moves)
+            node = node.UCBSelectChild(moves)
             state.DoMove(node.move)
 
         # Expand
         untriedMoves = node.GetUntriedMoves(moves)
         if len(untriedMoves) > 0:  # if we can expand (i.e. state/node is non-terminal)
             m = random.choice(untriedMoves)
-            player = state.next_player
+            player = state.playerToMove
             state.DoMove(m)
             node = node.AddChild(m, player)     # add child and descend tree
 
