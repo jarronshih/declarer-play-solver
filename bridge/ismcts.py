@@ -165,21 +165,28 @@ def ISMCTS(rootstate, itermax, verbose=False):
         state = rootstate.CloneAndRandomize(rootstate.playerToMove)
 
         # Select
-        while state.GetMoves() != [] and node.GetUntriedMoves(state.GetMoves()) == []:  # node is fully expanded and non-terminal
-            node = node.UCBSelectChild(state.GetMoves())
+        moves = []
+        while True:
+            moves = state.GetMoves()
+            if len(moves) == 0 or len(node.GetUntriedMoves(moves)) > 0:
+                break
+            node = node.ISUCTSelectChild(moves)
             state.DoMove(node.move)
 
         # Expand
-        untriedMoves = node.GetUntriedMoves(state.GetMoves())
-        if untriedMoves != []:  # if we can expand (i.e. state/node is non-terminal)
+        untriedMoves = node.GetUntriedMoves(moves)
+        if len(untriedMoves) > 0:  # if we can expand (i.e. state/node is non-terminal)
             m = random.choice(untriedMoves)
-            player = state.playerToMove
+            player = state.next_player
             state.DoMove(m)
             node = node.AddChild(m, player)     # add child and descend tree
 
         # Simulate
-        while state.GetMoves() != []:   # while state is non-terminal
-            state.DoMove(random.choice(state.GetMoves()))
+        while True:   # while state is non-terminal
+            moves = state.GetMoves()
+            if len(moves) == 0:
+                break
+            state.DoMove(random.choice(moves))
 
         # Backpropagate
         while node is not None:     # backpropagate from the expanded node and work back to the root node
