@@ -151,7 +151,7 @@ class Node:
         return s
 
 
-def ISMCTS(rootstate, itermax, verbose=False):
+def ISMCTS(rootstate, itermax, exploration, verbose=False):
     """ Conduct an ISMCTS search for itermax iterations starting from rootstate.
         Return the best move from the rootstate.
     """
@@ -170,7 +170,7 @@ def ISMCTS(rootstate, itermax, verbose=False):
             moves = state.GetMoves()
             if len(moves) == 0 or len(node.GetUntriedMoves(moves)) > 0:
                 break
-            node = node.UCBSelectChild(moves)
+            node = node.UCBSelectChild(moves, exploration=exploration)
             state.DoMove(node.move)
 
         # Expand

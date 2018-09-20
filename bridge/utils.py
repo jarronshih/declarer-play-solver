@@ -48,7 +48,7 @@ class BridgeGameState(object):
         self.ns_score = 0
         self.ew_score = 0
 
-    def _init_deck(self, north_hand, south_hand, unseen_cards=None):
+    def _init_deck(self, north_hand, south_hand, unseen_cards=None, trump=-1):
         assert len(north_hand) == len(south_hand)
         if unseen_cards is not None:
             assert len(north_hand) == len(unseen_cards) // 2
@@ -57,6 +57,7 @@ class BridgeGameState(object):
         self.player_hand['N'] = set(north_hand)
         self.player_hand['S'] = set(south_hand)
         self.remain_round = 0
+        self.trump = trump
 
         if unseen_cards is not None:
             self.unseen_cards = set(unseen_cards)
@@ -104,7 +105,7 @@ class BridgeGameState(object):
         if self.tricks[0][1].suit != card.suit and current_player in EW_PLAYERS:
             target_player = 'E' if current_player != 'E' else 'W'
             for c in list(self.unseen_cards):
-                if c.suit == self.trick[0].suit:
+                if c.suit == self.tricks[0][1].suit:
                     self.unseen_cards.discard(c)
                     self.player_hand[target_player].add(c)
 
